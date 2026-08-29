@@ -5,6 +5,30 @@
 
 const FORM_ENDPOINT = "/api/lead";
 
+/* ---- Analytics helpers ---- */
+
+/* Never let a blocked or missing gtag break the page. */
+function track(name, params) {
+  try {
+    if (typeof gtag === "function") gtag("event", name, params || {});
+  } catch (_) { /* analytics must never break the form */ }
+}
+
+/* Contact-intent tracking.
+ * Delegated so it keeps working if links are added or the markup changes.
+ * Phone clicks matter more than form fills for this client — most enquiries
+ * arrive by phone, and a tel: link fires nothing on its own.
+ */
+document.addEventListener("click", (e) => {
+  const a = e.target.closest && e.target.closest("a[href^='tel:'], a[href^='mailto:']");
+  if (!a) return;
+  const href = a.getAttribute("href") || "";
+  track(href.startsWith("tel:") ? "click_to_call" : "click_to_email", {
+    link_url: href,
+    link_text: (a.textContent || "").trim().slice(0, 100),
+  });
+});
+
 /* ---- Lead form ---- */
 
 const form = document.getElementById("lead-form");
@@ -56,11 +80,14 @@ form.addEventListener("submit", async (e) => {
 
     if (!res.ok) throw new Error("Request failed: " + res.status);
 
+    track("generate_lead", { project_type: payload.project || "unspecified" });
+
     statusEl.textContent =
       "Thanks, " + name.split(" ")[0] + " — your details are on their way. We'll follow up shortly.";
     statusEl.classList.add("ok");
     form.reset();
   } catch (err) {
+    track("lead_form_error", { message: String(err && err.message || err).slice(0, 100) });
     statusEl.innerHTML =
       'Something went wrong sending the form. Please call <a href="tel:+15304323633" style="color:#C8A45A">(530) 432‑3633</a> or email <a href="mailto:info@talonconstructioncompany.com" style="color:#C8A45A">info@talonconstructioncompany.com</a>.';
     statusEl.classList.add("err");
