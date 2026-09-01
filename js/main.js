@@ -29,6 +29,19 @@ document.addEventListener("click", (e) => {
   });
 });
 
+/* CTA engagement — which button gets clicked before a visitor ever reaches
+ * the form. Covers the header and hero buttons (.btn, in-page anchors);
+ * tel:/mailto: links are handled above and excluded here to avoid double
+ * counting. */
+document.addEventListener("click", (e) => {
+  const a = e.target.closest && e.target.closest("a.btn[href^='#']");
+  if (!a) return;
+  track("cta_click", {
+    cta_text: (a.textContent || "").trim().slice(0, 100),
+    cta_target: a.getAttribute("href") || "",
+  });
+});
+
 /* ---- Lead form ---- */
 
 const form = document.getElementById("lead-form");
