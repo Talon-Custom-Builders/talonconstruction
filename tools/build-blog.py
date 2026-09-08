@@ -178,11 +178,19 @@ def figure(post, kind):
     if not src:
         return placeholder(kind)
     ratio = "2 / 1" if kind == "wide" else "3 / 2"
-    return (
+    img = (
         '<div class="post-figure post-figure-%s">'
         '<img src="%s" alt="%s" loading="lazy" style="aspect-ratio:%s">'
         "</div>" % (kind, attr(src), attr(post.get("image_alt", "")), ratio)
     )
+    # A caption only earns its place on the banner - the archive cards carry
+    # their own title and excerpt already.
+    caption = post.get("image_caption", "") if kind == "wide" else ""
+    if caption:
+        return ('<figure class="post-figure-figure">%s'
+                '<figcaption class="post-figure-caption">%s</figcaption>'
+                "</figure>" % (img, esc(caption)))
+    return img
 
 
 # Confirmed by Kim 2026-09-02. LinkedIn and YouTube are still unverified and
@@ -301,7 +309,7 @@ def post_page(post, newer, older):
         <h1>{title}</h1>
         <p class="post-meta">{meta}</p>
       </div>
-      {figure}
+      <div class="wrap">{figure}</div>
       <div class="wrap wrap-reading post-body">
 {body}
       </div>

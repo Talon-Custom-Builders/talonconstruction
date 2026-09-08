@@ -842,3 +842,14 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
 @media (prefers-reduced-motion: reduce) {
   .blog-filter, .post-card-body h2 { transition: none; }
 }
+
+/* Banner caption. Only renders when posts.json sets image_caption, so a post
+   without a photo is unaffected. */
+.post-figure-figure { margin: 0; }
+.post-figure-caption {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--ink);
+  margin: 10px 0 40px;
+}
+.post-figure-figure .post-figure-wide { margin-bottom: 0; }
