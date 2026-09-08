@@ -694,7 +694,10 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
 .post-figure { overflow: hidden; background: var(--bone); }
 .post-figure img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .post-figure-card { aspect-ratio: 3 / 2; }
-.post-figure-wide { aspect-ratio: 2 / 1; max-height: 460px; margin: 0 0 40px; }
+/* margin-inline auto matters here: max-height clamps the height, and the
+   aspect-ratio then shrinks the width to 920px inside a 1072px column, so
+   without it the banner sits left-aligned and 76px off the text centre. */
+.post-figure-wide { aspect-ratio: 2 / 1; max-height: 460px; margin: 0 auto 40px; }
 
 /* Holds the slot at the right ratio until Kim's photography lands, so the
    layout does not shift when a real image replaces it. */
@@ -845,7 +848,9 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
 
 /* Banner caption. Only renders when posts.json sets image_caption, so a post
    without a photo is unaffected. */
-.post-figure-figure { margin: 0; }
+/* Shrink to the banner so the caption aligns to the image edge, not the
+   full column. */
+.post-figure-figure { margin: 0 auto; width: fit-content; max-width: 100%; }
 .post-figure-caption {
   font-family: var(--font-body);
   font-size: 0.78rem;
@@ -853,3 +858,31 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
   margin: 10px 0 40px;
 }
 .post-figure-figure .post-figure-wide { margin-bottom: 0; }
+
+/* ---------- Plan-sheet ground on a post ----------------------------------
+   A real floor-plan drawing, converted to grey and lifted so its darkest
+   linework sits at 59% rather than near-black, then laid behind the article
+   at low opacity. It is the same construction-drawing idea as the hero title
+   plate, used as a ground rather than an ornament.
+
+   Contrast was checked, not assumed: --ink body copy over the densest part of
+   the drawing measures 8.6:1, well clear of AA and above AAA, so this does not
+   disturb the WCAG work done on 2026-09-08. Fixed rather than scrolling
+   because the drawing is square and would have to be scaled absurdly to cover
+   a long article; position:fixed is used instead of background-attachment,
+   which iOS handles badly. */
+.post::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: url("/assets/house-plans.jpg") no-repeat center center;
+  background-size: cover;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+/* Anyone who has asked their OS for more contrast gets the plain bone ground. */
+@media (prefers-contrast: more) {
+  .post::before { display: none; }
+}

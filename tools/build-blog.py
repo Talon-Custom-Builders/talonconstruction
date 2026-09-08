@@ -100,7 +100,7 @@ HEAD = """<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/styles.css?v=4">
+  <link rel="stylesheet" href="/css/styles.css?v=5">
   <meta property="og:title" content="{title}">
   <meta property="og:description" content="{description}">
   <meta property="og:image" content="{og_image}">
