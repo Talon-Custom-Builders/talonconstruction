@@ -1,0 +1,38 @@
+{
+  "_comment": "Single source of truth for Talon's blog. Edit this file, then run: python tools/build-blog.py && python tools/build-sitemap.py. Never hand-edit anything under /blog/ - the builder overwrites it. Adding a post is an entry in `posts` below; nothing else needs touching.",
+  "_field_guide": {
+    "slug": "URL segment. Lowercase, hyphens, no dates. Becomes /blog/<slug>/ and cannot be changed later without breaking links.",
+    "title": "The headline, as published. Used as the <h1> and in the <title> tag.",
+    "date": "YYYY-MM-DD. Drives ordering and the published date shown on the page.",
+    "date_source": "Where the date came from. Say plainly if it is an authoring date rather than a confirmed publication date - this bit Hollie's site once.",
+    "tag": "One of the values in `tags` below. Shown on the card and used by the archive filter.",
+    "area": "Optional. A service area from `service_areas` below, when a post is genuinely about that place. Drives the local-SEO half of the blog. Leave empty for general posts - do NOT tag a post with an area it is not really about.",
+    "excerpt": "1-2 sentences for the archive card and the meta description. Written, not auto-truncated.",
+    "paragraphs": "Array of strings, one per paragraph. Plain text; the builder escapes and wraps them.",
+    "image": "Card image, 3:2, ~800px. Empty string renders the branded placeholder instead.",
+    "image_wide": "Post banner, 2:1, ~1440px. Empty string renders the placeholder.",
+    "image_alt": "Describe what the image SHOWS, including any words lettered inside it. Empty alt is only for decoration."
+  },
+  "_service_areas_note": "From the live GBP service-area list, confirmed 2026-09-01. The site currently names only Penn Valley, Lake Wildwood, Nevada County and the Sierra Foothills - the rest have no on-site presence at all, which is the local-SEO gap the blog is partly here to close. Do not invent an area that is not on this list.",
+  "service_areas": [
+    "Penn Valley",
+    "Lake Wildwood",
+    "Lake of the Pines",
+    "Grass Valley",
+    "Nevada City",
+    "Rough and Ready",
+    "North San Juan",
+    "Colfax",
+    "Truckee",
+    "Tahoe City"
+  ],
+  "_tags_note": "Keep this list short. Every tag becomes a filter button on the archive, and a filter with one post in it is worse than no filter.",
+  "tags": [
+    "Building & Remodeling",
+    "Planning & Budget",
+    "Around Nevada County",
+    "On the Job"
+  ],
+  "_posts_note": "EMPTY ON PURPOSE. The pipeline was built 2026-09-08 ahead of Kim supplying the articles. With no posts, /blog renders an honest empty state rather than a broken page, and it is NOT linked from the site nav or the sitemap until at least one post exists - see build-blog.py.",
+  "posts": []
+}

@@ -551,3 +551,238 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
   .why-specs li { grid-template-columns: 1fr; gap: 6px; }
   .local-inner { padding-left: 20px; }
 }
+
+/* =========================================================================
+   BLOG - "The Journal"
+   Added 2026-09-08. Uses only the tokens already defined in :root above.
+   Generated markup comes from tools/build-blog.py; do not hand-edit /blog/.
+   ========================================================================= */
+
+.wrap-reading { max-width: 68ch; }
+
+.page-intro {
+  background: var(--bone);
+  border-bottom: var(--rule);
+  padding: 64px 0 48px;
+}
+.page-intro h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2rem, 4.5vw, 2.9rem);
+  line-height: 1.12;
+  color: var(--navy);
+  margin: 0 0 14px;
+}
+.page-intro p {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--charcoal);
+  margin: 0;
+}
+
+.section { padding: 56px 0 72px; }
+
+/* ---------- Archive ---------- */
+
+.blog-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 34px;
+  padding-bottom: 22px;
+  border-bottom: var(--rule);
+}
+.blog-filter {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--charcoal);
+  background: transparent;
+  border: 1px solid rgba(28, 28, 30, 0.22);
+  border-radius: 999px;
+  padding: 9px 18px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.blog-filter:hover { border-color: var(--gold); }
+.blog-filter:focus-visible { outline: 2px solid var(--oxblood); outline-offset: 2px; }
+.blog-filter.is-active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--bone);
+}
+
+.post-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 34px 30px;
+}
+/* The filter sets this; CSS does the hiding. With JavaScript off nothing is
+   ever hidden, which is the point - a crawler sees every post. */
+.post-card[hidden] { display: none; }
+
+.post-card-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+.post-card-link:hover .post-card-body h2 { color: var(--oxblood); }
+.post-card-link:focus-visible { outline: 2px solid var(--oxblood); outline-offset: 4px; }
+
+.post-figure { overflow: hidden; background: var(--bone); }
+.post-figure img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.post-figure-card { aspect-ratio: 3 / 2; }
+.post-figure-wide { aspect-ratio: 2 / 1; max-height: 460px; margin: 0 0 40px; }
+
+/* Holds the slot at the right ratio until Kim's photography lands, so the
+   layout does not shift when a real image replaces it. */
+.post-figure-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--navy);
+  border-bottom: 3px solid var(--gold);
+}
+.post-figure-placeholder img {
+  width: 64px;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.55;
+}
+.post-figure-wide.post-figure-placeholder img { width: 92px; }
+
+.post-card-body { padding: 18px 0 0; }
+.post-card-meta,
+.post-meta {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  /* Not bare --steel. The page sits on --bone, and #737373 on #F4F0E6
+     measures 4.17:1 against WCAG AA's 4.5:1 - it only passes on white.
+     Mixed 15% toward --charcoal it measures 4.96:1 and still reads as quiet
+     meta. Derived from the existing tokens, nothing new in the palette.
+     (The same pairing fails worse on index.html: --steel on --charcoal is
+     3.27:1. That one is pre-existing and flagged separately.) */
+  color: color-mix(in srgb, var(--steel) 85%, var(--charcoal));
+  margin: 0 0 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.post-tag, .post-area { color: var(--oxblood); }
+.post-card-body h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1.25;
+  color: var(--navy);
+  margin: 0 0 10px;
+  transition: color 0.15s ease;
+}
+.post-card-excerpt {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--charcoal);
+  margin: 0 0 14px;
+}
+.post-card-more {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--oxblood);
+}
+
+.blog-empty, .blog-no-results {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--charcoal);
+  margin: 0 0 22px;
+}
+
+/* ---------- Post ---------- */
+
+.post { padding: 56px 0 72px; }
+.post-back {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0 0 18px;
+}
+.post-back a { color: var(--oxblood); text-decoration: none; }
+.post-back a:hover { text-decoration: underline; }
+
+.post h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  line-height: 1.15;
+  color: var(--navy);
+  margin: 0 0 12px;
+}
+
+/* 1.05rem over a 68ch measure. The audience for a custom-home decision is
+   reading carefully, not skimming. */
+.post-body p {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--charcoal);
+  margin: 0 0 22px;
+}
+.post-body p:last-child { margin-bottom: 0; }
+
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 48px 0 0;
+  padding-top: 26px;
+  border-top: var(--rule);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.post-nav a { color: var(--oxblood); text-decoration: none; }
+.post-nav a:hover { text-decoration: underline; }
+.post-nav-next { margin-left: auto; text-align: right; }
+
+.post-cta {
+  margin: 44px 0 0;
+  padding: 30px 32px;
+  background: var(--bone);
+  border-left: 3px solid var(--gold);
+}
+.post-cta h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--navy);
+  margin: 0 0 8px;
+}
+.post-cta p {
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--charcoal);
+  margin: 0 0 18px;
+}
+
+@media (max-width: 900px) {
+  .post-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 620px) {
+  .post-grid { grid-template-columns: 1fr; gap: 30px; }
+  .page-intro { padding: 44px 0 34px; }
+  .post-figure-wide { margin-bottom: 28px; }
+  .post-cta { padding: 24px 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .blog-filter, .post-card-body h2 { transition: none; }
+}
