@@ -116,6 +116,8 @@ HEAD = """<!DOCTYPE html>
 </head>
 <body>
 
+  <a href="#main" class="skip-link">Skip to content</a>
+
   <header class="site-header">
     <div class="wrap header-inner">
       <a href="/" class="brand">

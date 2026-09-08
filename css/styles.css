@@ -22,6 +22,25 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
+/* Off-screen until focused, then visible. Not display:none - that would
+   hide it from the keyboard users it exists for. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--navy);
+  color: var(--bone);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 12px 20px;
+  text-decoration: none;
+}
+.skip-link:focus {
+  left: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { animation: none !important; transition: none !important; }
@@ -240,8 +259,11 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
 @media (max-width: 640px) {
   .hero { min-height: 78vh; }
   .hero-plate {
-    font-size: 0.6rem;
-    letter-spacing: 0.12em;
+    /* 0.7rem, not 0.6rem. At 9.6px this was the smallest text on the site,
+       and it carries the CSLB licence number - the one credential a
+       contractor is judged on. It wraps rather than shrinks. */
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
     flex-wrap: wrap;
     white-space: normal;
     gap: 6px 14px;
@@ -269,18 +291,27 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
 }
 .craft-specs li {
   display: grid;
-  grid-template-columns: 110px 1fr;
+  grid-template-columns: 124px 1fr;
   gap: 18px;
   padding: 18px 0;
   border-bottom: var(--rule);
 }
 .spec-label {
-  font-size: 0.68rem;
+  /* 0.75rem, not 0.68rem. At 10.88px these sat under the 11px floor for
+     functional text while ALSO being uppercase, tracked at 0.2em and below
+     contrast - four legibility penalties at once, on the five phrases that
+     carry what Talon is actually selling. */
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  /* 0.2em was opening up 10.88px capitals. At 12px it only fragments them. */
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--steel);
-  padding-top: 3px;
+  /* Not bare --steel: #737373 on --bone measures 4.17:1 against WCAG AA's
+     4.5:1, and rendered here it measured 3.84:1. Mixed 70% toward --charcoal
+     it is 5.94:1 - real headroom, still visibly quieter than .spec-value,
+     and derived from tokens rather than a new colour. */
+  color: color-mix(in srgb, var(--steel) 70%, var(--charcoal));
+  padding-top: 2px;
 }
 .spec-value {
   font-size: 0.95rem;
@@ -420,7 +451,12 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
 .footer-fine {
   margin-top: 10px;
   font-size: 0.75rem;
-  color: var(--steel);
+  /* --steel on --charcoal is 3.27:1 - the worst contrast on the site. The
+     footer already establishes bone-at-alpha as its text treatment
+     (rgba(244,240,230,0.8) on .site-footer), so this follows that rather
+     than introducing a third approach: 0.6 gives 5.83:1 and still reads as
+     fine print against the 0.8 body text above it. */
+  color: rgba(244, 240, 230, 0.6);
 }
 @media (max-width: 640px) {
   .footer-inner { flex-direction: column; align-items: flex-start; }
