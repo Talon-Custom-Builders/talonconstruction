@@ -150,8 +150,15 @@
 
   <!-- ============ HERO ============ -->
   <section class="hero" id="top">
+    <!-- Three tiers, not two. Phones already got the 1024; everything from
+         701px upward - every laptop - was downloading the full 1920. The
+         1440 sits where most desktop visitors actually are and saves 189KB
+         on the LCP element. The w-descriptor and sizes on the middle source
+         mean a high-DPR laptop still gets the 1920 rather than a soft 1440,
+         which a plain media query would have got wrong. -->
     <picture class="hero-media">
       <source media="(max-width: 700px)" srcset="assets/hero-1024.jpg">
+      <source media="(max-width: 1440px)" srcset="assets/hero-1440.jpg 1440w, assets/hero-1920.jpg 1920w" sizes="100vw">
       <img src="assets/hero-1920.jpg" alt="Custom craftsman home with stone columns, covered outdoor living area, and landscaped water feature" fetchpriority="high" width="1920" height="1080">
     </picture>
     <div class="hero-scrim" aria-hidden="true"></div>
