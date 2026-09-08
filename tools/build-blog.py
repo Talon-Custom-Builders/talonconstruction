@@ -112,7 +112,8 @@ HEAD = """<!DOCTYPE html>
   <meta name="twitter:title" content="{title}">
   <meta name="twitter:description" content="{description}">
   <meta name="twitter:image" content="{og_image}">
-{schema}
+  <meta property="og:image:alt" content="{og_image_alt}">
+{extra_meta}{schema}
 </head>
 <body>
 
@@ -184,6 +185,43 @@ def figure(post, kind):
     )
 
 
+# Confirmed by Kim 2026-09-02. LinkedIn and YouTube are still unverified and
+# deliberately absent - a wrong sameAs is worse than a missing one.
+SOCIAL = [
+    "https://www.facebook.com/talonconstructionco",
+    "https://www.instagram.com/talonconstructionco",
+]
+
+
+def org_node():
+    return {
+        "@type": "Organization",
+        "name": "Talon Construction Company",
+        "url": SITE + "/",
+        "telephone": "+1-530-432-3633",
+        "logo": {"@type": "ImageObject", "url": "%s/assets/talon-logo.png" % SITE},
+        "sameAs": list(SOCIAL),
+    }
+
+
+def crumbs(trail):
+    """BreadcrumbList from [(name, url), ...]."""
+    return {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": i + 1, "name": n, "item": u}
+            for i, (n, u) in enumerate(trail)
+        ],
+    }
+
+
+def ld(*blocks):
+    return "\n".join(
+        '  <script type="application/ld+json">\n%s\n  </script>'
+        % json.dumps(b, indent=2) for b in blocks)
+
+
 def post_page(post, newer, older):
     body = "\n".join("      <p>%s</p>" % esc(t) for t in post["paragraphs"])
 
@@ -201,28 +239,59 @@ def post_page(post, newer, older):
         nav.append('<a class="post-nav-next" href="/blog/%s/">%s &rarr;</a>'
                    % (newer["slug"], esc(newer["title"])))
 
-    schema = json.dumps({
+    url = "%s/blog/%s/" % (SITE, post["slug"])
+    image = (SITE + post["image_wide"]) if post.get("image_wide") \
+        else "%s/assets/hero-1920.jpg" % SITE
+    modified = post.get("date_modified") or post["date"]
+
+    article = {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "headline": post["title"],
         "datePublished": post["date"],
+        "dateModified": modified,
         "description": post["excerpt"],
-        "mainEntityOfPage": {"@type": "WebPage", "@id": "%s/blog/%s/" % (SITE, post["slug"])},
-        "author": {"@type": "Organization", "name": "Talon Construction Company"},
-        "publisher": {
-            "@type": "Organization",
-            "name": "Talon Construction Company",
-            "logo": {"@type": "ImageObject", "url": "%s/assets/talon-logo.png" % SITE},
-        },
-    }, indent=2)
+        "image": image,
+        "inLanguage": "en-US",
+        "mainEntityOfPage": {"@type": "WebPage", "@id": url},
+        "isPartOf": {"@type": "Blog", "@id": "%s/blog/#journal" % SITE,
+                     "name": "The Journal"},
+        "author": org_node(),
+        "publisher": org_node(),
+    }
+    if post.get("tag"):
+        article["articleSection"] = post["tag"]
+    if post.get("area"):
+        # The post is genuinely about this place - say so in the graph as well
+        # as on the card. This is the local half of why the blog exists.
+        article["contentLocation"] = {
+            "@type": "Place",
+            "name": "%s, California" % post["area"],
+        }
+
+    schema = ld(article, crumbs([
+        ("Home", SITE + "/"),
+        ("The Journal", "%s/blog/" % SITE),
+        (post["title"], url),
+    ]))
 
     head = HEAD.format(
         title="%s | Talon Construction Company" % esc(post["title"]),
         description=attr(post["excerpt"]),
         canonical="%s/blog/%s/" % (SITE, post["slug"]),
-        og_image=post.get("image_wide") and SITE + post["image_wide"] or "%s/assets/hero-1920.jpg" % SITE,
+        og_image=image,
+        og_image_alt=attr(post.get("image_alt")
+                          or "Talon Construction Company, Penn Valley, California"),
         og_type="article",
-        schema='  <script type="application/ld+json">\n%s\n  </script>' % schema,
+        extra_meta=(
+            '  <meta name="author" content="Talon Construction Company">\n'
+            '  <meta property="article:published_time" content="%s">\n'
+            '  <meta property="article:modified_time" content="%s">\n'
+            % (post["date"], modified)
+            + ('  <meta property="article:section" content="%s">\n'
+               % attr(post["tag"]) if post.get("tag") else "")
+        ),
+        schema=schema,
     )
 
     return head + """
@@ -338,8 +407,30 @@ def archive_page():
         description="Notes from the job site - custom home building, remodels and additions around Penn Valley, Grass Valley, Nevada City and the wider Nevada County area.",
         canonical="%s/blog/" % SITE,
         og_image="%s/assets/hero-1920.jpg" % SITE,
+        og_image_alt="Talon Construction Company, Penn Valley, California",
         og_type="website",
-        schema="",
+        extra_meta="",
+        schema=ld(
+            {
+                "@context": "https://schema.org",
+                "@type": "Blog",
+                "@id": "%s/blog/#journal" % SITE,
+                "name": "The Journal",
+                "description": "Notes from the job site - custom home building, "
+                               "remodels and additions around Nevada County.",
+                "url": "%s/blog/" % SITE,
+                "inLanguage": "en-US",
+                "publisher": org_node(),
+                "blogPost": [
+                    {"@type": "BlogPosting",
+                     "headline": p["title"],
+                     "datePublished": p["date"],
+                     "url": "%s/blog/%s/" % (SITE, p["slug"])}
+                    for p in posts
+                ],
+            },
+            crumbs([("Home", SITE + "/"), ("The Journal", "%s/blog/" % SITE)]),
+        ),
     )
     return head + inner + FOOT
 
