@@ -280,7 +280,7 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
   .hero { min-height: 78vh; }
   .hero-plate {
     /* 0.7rem, not 0.6rem. At 9.6px this was the smallest text on the site,
-       and it carries the CSLB licence number - the one credential a
+       and it carries the CSLB license number - the one credential a
        contractor is judged on. It wraps rather than shrinks. */
     font-size: 0.7rem;
     letter-spacing: 0.1em;
@@ -894,3 +894,39 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
 @media (prefers-contrast: more) {
   .post::before { display: none; }
 }
+
+/* ---------- Post body structure ------------------------------------------
+   The builder learned to render headings, lists and links; the global reset
+   at the top of this file zeroes margins and padding, and `a { color: inherit }`
+   is right in the nav and footer but wrong in body copy. Each needs styling
+   here or it renders as undifferentiated text. */
+.post-body h2 {
+  font-size: 1.45rem;
+  line-height: 1.22;
+  margin: 42px 0 14px;
+}
+.post-body h2:first-child { margin-top: 0; }
+
+.post-body ul {
+  margin: 0 0 24px;
+  padding-left: 1.15em;
+  list-style: disc;
+}
+.post-body li {
+  color: var(--ink);
+  line-height: 1.65;
+  margin-bottom: 10px;
+}
+.post-body li:last-child { margin-bottom: 0; }
+.post-body li::marker { color: var(--gold); }
+
+/* A citation nobody can see is not a citation. Oxblood underlined measures
+   7.5:1 over the plan ground, and the underline means it does not rely on
+   colour alone. */
+.post-body a {
+  color: var(--oxblood);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+.post-body a:hover { color: var(--oxblood-hover); }

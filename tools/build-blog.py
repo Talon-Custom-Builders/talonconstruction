@@ -100,7 +100,7 @@ HEAD = """<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/styles.css?v=5">
+  <link rel="stylesheet" href="/css/styles.css?v=6">
   <meta property="og:title" content="{title}">
   <meta property="og:description" content="{description}">
   <meta property="og:image" content="{og_image}">
@@ -237,8 +237,60 @@ def ld(*blocks):
         % json.dumps(b, indent=2) for b in blocks)
 
 
+BOLD = re.compile(r"\*\*(.+?)\*\*")
+# [text](https://example.com). https/http only, so a link can never become
+# javascript: or data:; anything else stays literal text.
+LINK = re.compile(r"\[([^\]]+)\]\((https?://[^\s)]+)\)")
+
+
+def inline(text):
+    """Escape first, then allow **bold** and [text](url) only.
+
+    Deliberately not a markdown parser. Bold and links are the only inline forms
+    these posts need - bold carries the `**term** is` definitions that make a
+    section self-contained, and a post that cannot cite a source is not worth
+    much. Everything else stays literal, so nothing an author types into
+    posts.json can inject markup, and the link scheme is allow-listed.
+    """
+    out = LINK.sub(r'<a href="\2">\1</a>', esc(text))
+    return BOLD.sub(r"<strong>\1</strong>", out)
+
+
+def render_body(blocks):
+    """Turn the paragraphs array into HTML.
+
+    Three forms, chosen so posts.json stays readable to whoever edits it:
+
+        "## Heading"   ->  <h2>, which is what gives a post scannable structure
+        "- item"       ->  a run of consecutive items becomes one <ul>
+        anything else  ->  <p>
+
+    h2 is the right level: the post title is the h1, so headings inside the
+    body sit under it and the document outline stays legal.
+    """
+    out, bullets = [], []
+
+    def flush():
+        if bullets:
+            out.append("      <ul>\n%s\n      </ul>" % "\n".join(
+                "        <li>%s</li>" % inline(b) for b in bullets))
+            del bullets[:]
+
+    for block in blocks:
+        if block.startswith("## "):
+            flush()
+            out.append("      <h2>%s</h2>" % inline(block[3:]))
+        elif block.startswith("- "):
+            bullets.append(block[2:])
+        else:
+            flush()
+            out.append("      <p>%s</p>" % inline(block))
+    flush()
+    return "\n".join(out)
+
+
 def post_page(post, newer, older):
-    body = "\n".join("      <p>%s</p>" % esc(t) for t in post["paragraphs"])
+    body = render_body(post["paragraphs"])
 
     meta = ['<span class="post-date">%s</span>' % pretty_date(post["date"])]
     if post.get("tag"):
