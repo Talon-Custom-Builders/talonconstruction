@@ -54,10 +54,11 @@
         "The standard we try to hold to here is the same one we bring to a job. Say what is true, explain the decisions, and do not promise what cannot be delivered.",
         "If there is something you would like us to write about — a question you have not been able to get a straight answer to — call us at (530) 432-3633 or send it through the contact form. That is a genuine offer. The best posts here will come from questions homeowners actually asked."
       ],
-      "image": "",
-      "image_wide": "",
-      "image_alt": "Jordon O'Hara, Mike Novo and Erik Oxenbol of Talon Construction Company, standing left to right.",
-      "image_caption": "Left to right: Jordon O'Hara, Mike Novo, founder, and Erik Oxenbol."
+      "image": "/assets/team-800.jpg",
+      "image_wide": "/assets/team-1280.jpg",
+      "image_alt": "A painted portrait of Jordon O'Hara, Mike Novo and Erik Oxenbol of Talon Construction Company, standing together left to right outside a home.",
+      "image_caption": "Left to right: Jordon O'Hara, Mike Novo, founder, and Erik Oxenbol.",
+      "image_wide_ratio": "3 / 2"
     }
   ]
 }

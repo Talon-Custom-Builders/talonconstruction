@@ -697,7 +697,15 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
 /* margin-inline auto matters here: max-height clamps the height, and the
    aspect-ratio then shrinks the width to 920px inside a 1072px column, so
    without it the banner sits left-aligned and 76px off the text centre. */
-.post-figure-wide { aspect-ratio: 2 / 1; max-height: 460px; margin: 0 auto 40px; }
+.post-figure-wide {
+  aspect-ratio: 2 / 1;
+  /* Sized to the reading measure, so the banner is the width of the text
+     it introduces rather than a slab above it. 48px is the .wrap gutter,
+     which .wrap-reading carries inside its 68ch. */
+  max-width: calc(68ch - 48px);
+  max-height: 460px;
+  margin: 0 auto 40px;
+}
 
 /* Holds the slot at the right ratio until Kim's photography lands, so the
    layout does not shift when a real image replaces it. */
@@ -878,7 +886,7 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
   z-index: -1;
   background: url("/assets/house-plans.jpg") no-repeat center center;
   background-size: cover;
-  opacity: 0.18;
+  opacity: 0.14;
   pointer-events: none;
 }
 

@@ -177,11 +177,18 @@ def figure(post, kind):
     src = post.get("image_wide" if kind == "wide" else "image", "")
     if not src:
         return placeholder(kind)
-    ratio = "2 / 1" if kind == "wide" else "3 / 2"
+    # The banner ratio is the image's own when posts.json declares one. Forcing
+    # every photograph into 2:1 crops it top and bottom, which on a photograph
+    # of people means cropping heads. The default stays 2:1 for the placeholder
+    # and for any post that does not say otherwise.
+    if kind == "wide":
+        ratio = post.get("image_wide_ratio") or "2 / 1"
+    else:
+        ratio = "3 / 2"
     img = (
-        '<div class="post-figure post-figure-%s">'
-        '<img src="%s" alt="%s" loading="lazy" style="aspect-ratio:%s">'
-        "</div>" % (kind, attr(src), attr(post.get("image_alt", "")), ratio)
+        '<div class="post-figure post-figure-%s" style="aspect-ratio:%s">'
+        '<img src="%s" alt="%s" loading="lazy">'
+        "</div>" % (kind, ratio, attr(src), attr(post.get("image_alt", "")))
     )
     # A caption only earns its place on the banner - the archive cards carry
     # their own title and excerpt already.
