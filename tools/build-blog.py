@@ -77,6 +77,18 @@ def pretty_date(iso):
     return "%s %d, %s" % (months[int(m) - 1], int(d), y)
 
 
+def read_time(paragraphs):
+    """Estimate reading time from the paragraphs array, at 200 wpm.
+
+    Computed rather than hand-entered in posts.json, same reasoning as
+    build-sitemap.py reading real files instead of a maintained list: a
+    number nobody has to remember to update cannot go stale.
+    """
+    words = sum(len(re.sub(r"^(#+\s+|-\s+)", "", b).split()) for b in paragraphs)
+    minutes = max(1, round(words / 200))
+    return "%d min read" % minutes
+
+
 HEAD = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -100,7 +112,7 @@ HEAD = """<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/styles.css?v=6">
+  <link rel="stylesheet" href="/css/styles.css?v=7">
   <meta property="og:title" content="{title}">
   <meta property="og:description" content="{description}">
   <meta property="og:image" content="{og_image}">
@@ -297,6 +309,7 @@ def post_page(post, newer, older):
         meta.append('<span class="post-tag">%s</span>' % esc(post["tag"]))
     if post.get("area"):
         meta.append('<span class="post-area">%s</span>' % esc(post["area"]))
+    meta.append('<span class="post-readtime">%s</span>' % read_time(post["paragraphs"]))
 
     nav = []
     if older:
@@ -361,32 +374,86 @@ def post_page(post, newer, older):
         schema=schema,
     )
 
+    # Category label shown as the eyebrow and the trailing breadcrumb crumb.
+    # `eyebrow` in posts.json overrides the tag when a post wants to read
+    # differently than its filter category (e.g. tag "Planning & Budget" but
+    # eyebrow "Planning & Preconstruction") - optional, falls back to tag.
+    category_label = post.get("eyebrow") or post.get("tag") or ""
+
+    breadcrumb_current = (
+        ' <span aria-hidden="true">&rarr;</span> '
+        '<span class="post-breadcrumb-current">%s</span>' % esc(category_label)
+    ) if category_label else ""
+    breadcrumb_html = (
+        '<nav class="post-breadcrumb" aria-label="Breadcrumb">'
+        '<a href="/">Home</a> <span aria-hidden="true">&rarr;</span> '
+        '<a href="/journal/">The Journal</a>%s</nav>' % breadcrumb_current
+    )
+
+    eyebrow_html = (
+        '<p class="post-eyebrow">%s</p>' % esc(category_label.upper())
+    ) if category_label else ""
+
+    deck_html = (
+        '<p class="post-deck">%s</p>' % inline(post["deck"])
+    ) if post.get("deck") else ""
+
+    # AEO/GEO short-answer callout. Optional - only posts that set
+    # `short_answer` in posts.json get one. Deliberately plain and short:
+    # useful to a search/answer engine and to a reader skimming the top.
+    answer_html = (
+        '<div class="wrap wrap-reading"><div class="post-answer">'
+        '<p class="post-answer-label">The short answer</p>'
+        '<p>%s</p></div></div>' % inline(post["short_answer"])
+    ) if post.get("short_answer") else ""
+
+    # Per-post CTA override, falling back to the original fixed copy so a
+    # post that sets none of these renders identically to before.
+    cta_heading = post.get("cta_heading") or "Thinking about a project?"
+    cta_body = post.get("cta_body") or (
+        "Talon has been building in Nevada County since 1981. Tell us what "
+        "you have in mind and we will talk it through."
+    )
+    cta_href = post.get("cta_href") or "/#contact"
+    cta_label = post.get("cta_label") or "Start Your Project"
+
     return head + """
     <article class="post">
       <div class="wrap wrap-reading">
-        <p class="post-back"><a href="/journal/">&larr; The Journal</a></p>
+        {breadcrumb}
+        {eyebrow}
         <h1>{title}</h1>
+        {deck}
         <p class="post-meta">{meta}</p>
       </div>
       <div class="wrap">{figure}</div>
+      {answer}
       <div class="wrap wrap-reading post-body">
 {body}
       </div>
       <div class="wrap wrap-reading">
         <nav class="post-nav" aria-label="More posts">{nav}</nav>
         <aside class="post-cta">
-          <h2>Thinking about a project?</h2>
-          <p>Talon has been building in Nevada County since 1981. Tell us what you have in mind and we will talk it through.</p>
-          <a class="btn btn-gold" href="/#contact">Start Your Project</a>
+          <h2>{cta_heading}</h2>
+          <p>{cta_body}</p>
+          <a class="btn btn-gold" href="{cta_href}">{cta_label}</a>
         </aside>
       </div>
     </article>
 """.format(
+        breadcrumb=breadcrumb_html,
+        eyebrow=eyebrow_html,
         title=esc(post["title"]),
+        deck=deck_html,
         meta=" ".join(meta),
         figure=figure(post, "wide"),
+        answer=answer_html,
         body=body,
         nav="\n          ".join(nav),
+        cta_heading=esc(cta_heading),
+        cta_body=esc(cta_body),
+        cta_href=attr(cta_href),
+        cta_label=esc(cta_label),
     ) + FOOT
 
 

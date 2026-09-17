@@ -786,6 +786,63 @@ h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
 .post-back a { color: var(--oxblood); text-decoration: none; }
 .post-back a:hover { text-decoration: underline; }
 
+/* Breadcrumb, eyebrow, deck and short-answer callout. Added 2026-09-17
+   alongside the /blog/ -> /journal/ rename. All optional in posts.json -
+   a post that sets none of them renders like the original design. */
+.post-breadcrumb {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--steel);
+  margin: 0 0 18px;
+}
+.post-breadcrumb a { color: var(--steel); text-decoration: none; }
+.post-breadcrumb a:hover { color: var(--oxblood); text-decoration: underline; }
+.post-breadcrumb-current { color: var(--oxblood); }
+
+.post-eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--oxblood);
+  margin: 0 0 10px;
+}
+
+.post-deck {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: var(--charcoal);
+  margin: 0 0 16px;
+}
+
+.post-answer {
+  background: var(--bone);
+  border-left: 3px solid var(--oxblood);
+  border-radius: 2px;
+  padding: 20px 24px;
+  margin: 0 auto 32px;
+  max-width: calc(68ch - 48px);
+}
+.post-answer-label {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+  margin: 0 0 8px;
+}
+.post-answer p:last-child {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--charcoal);
+  margin: 0;
+}
+
 .post h1 {
   font-family: var(--font-display);
   font-weight: 700;
