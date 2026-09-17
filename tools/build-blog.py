@@ -148,7 +148,7 @@ FOOT = """  </main>
         <p>Penn Valley, California</p>
         <p>California Licensed General Contractor &middot; CSLB #397350</p>
         <p>Phone: <a href="tel:+15304323633">(530) 432&#8209;3633</a> &middot; Website: <a href="https://www.talonconstructioncompany.com">www.talonconstructioncompany.com</a></p>
-        <p><a href="/">Home</a> &middot; <a href="/blog/">The Journal</a> &middot; <a href="/#contact">Start Your Project</a></p>
+        <p><a href="/">Home</a> &middot; <a href="/journal/">The Journal</a> &middot; <a href="/#contact">Start Your Project</a></p>
         <p class="footer-tagline">Careful planning. Honest communication. Work built to last.</p>
         <p class="footer-fine">&copy; 2026 Talon Construction Company. All rights reserved.</p>
       </div>
@@ -300,13 +300,13 @@ def post_page(post, newer, older):
 
     nav = []
     if older:
-        nav.append('<a class="post-nav-prev" href="/blog/%s/">&larr; %s</a>'
+        nav.append('<a class="post-nav-prev" href="/journal/%s/">&larr; %s</a>'
                    % (older["slug"], esc(older["title"])))
     if newer:
-        nav.append('<a class="post-nav-next" href="/blog/%s/">%s &rarr;</a>'
+        nav.append('<a class="post-nav-next" href="/journal/%s/">%s &rarr;</a>'
                    % (newer["slug"], esc(newer["title"])))
 
-    url = "%s/blog/%s/" % (SITE, post["slug"])
+    url = "%s/journal/%s/" % (SITE, post["slug"])
     image = (SITE + post["image_wide"]) if post.get("image_wide") \
         else "%s/assets/hero-1920.jpg" % SITE
     modified = post.get("date_modified") or post["date"]
@@ -321,7 +321,7 @@ def post_page(post, newer, older):
         "image": image,
         "inLanguage": "en-US",
         "mainEntityOfPage": {"@type": "WebPage", "@id": url},
-        "isPartOf": {"@type": "Blog", "@id": "%s/blog/#journal" % SITE,
+        "isPartOf": {"@type": "Blog", "@id": "%s/journal/#journal" % SITE,
                      "name": "The Journal"},
         "author": org_node(),
         "publisher": org_node(),
@@ -338,14 +338,14 @@ def post_page(post, newer, older):
 
     schema = ld(article, crumbs([
         ("Home", SITE + "/"),
-        ("The Journal", "%s/blog/" % SITE),
+        ("The Journal", "%s/journal/" % SITE),
         (post["title"], url),
     ]))
 
     head = HEAD.format(
         title="%s | Talon Construction Company" % esc(post["title"]),
         description=attr(post["excerpt"]),
-        canonical="%s/blog/%s/" % (SITE, post["slug"]),
+        canonical="%s/journal/%s/" % (SITE, post["slug"]),
         og_image=image,
         og_image_alt=attr(post.get("image_alt")
                           or "Talon Construction Company, Penn Valley, California"),
@@ -364,7 +364,7 @@ def post_page(post, newer, older):
     return head + """
     <article class="post">
       <div class="wrap wrap-reading">
-        <p class="post-back"><a href="/blog/">&larr; The Journal</a></p>
+        <p class="post-back"><a href="/journal/">&larr; The Journal</a></p>
         <h1>{title}</h1>
         <p class="post-meta">{meta}</p>
       </div>
@@ -429,7 +429,7 @@ def archive_page():
             if p.get("tag"):
                 bits.append('<span class="post-tag">%s</span>' % esc(p["tag"]))
             cards.append("""      <li class="post-card" data-tag="{tag}">
-        <a class="post-card-link" href="/blog/{slug}/">
+        <a class="post-card-link" href="/journal/{slug}/">
           {figure}
           <div class="post-card-body">
             <p class="post-card-meta">{meta}</p>
@@ -472,7 +472,7 @@ def archive_page():
     head = HEAD.format(
         title="The Journal | Talon Construction Company",
         description="Notes from the job site - custom home building, remodels and additions around Penn Valley, Grass Valley, Nevada City and the wider Nevada County area.",
-        canonical="%s/blog/" % SITE,
+        canonical="%s/journal/" % SITE,
         og_image="%s/assets/hero-1920.jpg" % SITE,
         og_image_alt="Talon Construction Company, Penn Valley, California",
         og_type="website",
@@ -481,29 +481,29 @@ def archive_page():
             {
                 "@context": "https://schema.org",
                 "@type": "Blog",
-                "@id": "%s/blog/#journal" % SITE,
+                "@id": "%s/journal/#journal" % SITE,
                 "name": "The Journal",
                 "description": "Notes from the job site - custom home building, "
                                "remodels and additions around Nevada County.",
-                "url": "%s/blog/" % SITE,
+                "url": "%s/journal/" % SITE,
                 "inLanguage": "en-US",
                 "publisher": org_node(),
                 "blogPost": [
                     {"@type": "BlogPosting",
                      "headline": p["title"],
                      "datePublished": p["date"],
-                     "url": "%s/blog/%s/" % (SITE, p["slug"])}
+                     "url": "%s/journal/%s/" % (SITE, p["slug"])}
                     for p in posts
                 ],
             },
-            crumbs([("Home", SITE + "/"), ("The Journal", "%s/blog/" % SITE)]),
+            crumbs([("Home", SITE + "/"), ("The Journal", "%s/journal/" % SITE)]),
         ),
     )
     return head + inner + FOOT
 
 
 # --- write -------------------------------------------------------------
-blog = ROOT / "blog"
+blog = ROOT / "journal"
 blog.mkdir(exist_ok=True)
 (blog / "index.html").write_text(archive_page(), encoding="utf-8", newline="\n")
 
@@ -534,7 +534,7 @@ for d in orphans:
         # behind is untidy, not dangerous. Warn, do not abort the build.
         stuck.append("%s (%s)" % (d, err))
 
-print("%d post(s) written to /blog/" % len(posts))
+print("%d post(s) written to /journal/" % len(posts))
 if orphans:
     print("removed %d orphaned page(s): %s" % (len(orphans), ", ".join(d.name for d in orphans)))
 if stuck:
@@ -543,5 +543,5 @@ if stuck:
     for s in stuck:
         print("  " + s)
 if not posts:
-    print("posts.json is empty - /blog renders its empty state, and build-sitemap.py")
-    print("will leave the blog out of the sitemap until a post exists.")
+    print("posts.json is empty - /journal renders its empty state, and build-sitemap.py")
+    print("will leave the journal out of the sitemap until a post exists.")

@@ -29,9 +29,9 @@ urls = [("%s/" % SITE, today, "monthly", "1.0")]
 
 if posts:
     # The archive changes whenever the newest post does.
-    urls.append(("%s/blog/" % SITE, posts[0]["date"], "weekly", "0.8"))
+    urls.append(("%s/journal/" % SITE, posts[0]["date"], "weekly", "0.8"))
     for p in posts:
-        urls.append(("%s/blog/%s/" % (SITE, p["slug"]), p["date"], "yearly", "0.6"))
+        urls.append(("%s/journal/%s/" % (SITE, p["slug"]), p["date"], "yearly", "0.6"))
 
 lines = ['<?xml version="1.0" encoding="UTF-8"?>',
          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
@@ -48,4 +48,4 @@ lines.append("</urlset>")
 
 print("sitemap.xml: %d URL(s)" % len(urls))
 if not posts:
-    print("  blog deliberately omitted - posts.json is empty")
+    print("  journal deliberately omitted - posts.json is empty")

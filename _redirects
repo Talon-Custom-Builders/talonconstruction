@@ -1,0 +1,4 @@
+# Blog section renamed to /journal/ on 2026-09-17.
+# Permanent redirect so old /blog/ links and search results still resolve.
+/blog/      /journal/      301
+/blog/*     /journal/:splat  301
